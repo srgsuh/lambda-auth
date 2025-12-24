@@ -18,6 +18,7 @@ def getenv(param_id: str, default_value: str | None = None) -> str:
 
 CHALLENGE_NAME: str = "ChallengeName"
 NEW_PWD_CHALLENGE: str = 'NEW_PASSWORD_REQUIRED'
+AUTH_RESULT: str = "AuthenticationResult"
 
 client = boto3.client('cognito-idp', region_name=getenv('AWS_REGION_NAME', 'eu-central-1'))
 
@@ -71,9 +72,10 @@ def login(event: dict) -> dict:
 def lambda_handler(event, context) -> dict:
     try:
         logger.debug(event)
-        response = login(event)
-        logger.debug(f'Login response: {response}')
-        return create_response(200, {"response": response})
+        login_response = login(event)
+        logger.debug(f'Login response: {login_response}')
+        reply = login_response.get(AUTH_RESULT, {})
+        return create_response(200, reply)
     except ValidationError as ve:
         logger.debug(f"ValidationError: {ve.errors(include_context=False,include_url=False,include_input=False)}")
         return not_valid_response(ve)
