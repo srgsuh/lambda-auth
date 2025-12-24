@@ -38,14 +38,13 @@ class LoginRequest(BaseModel):
         validate_password(value)
         return value
 
-def parse_event(event: dict) -> tuple[str, str, str | None]:
+def parse_event(event: dict) -> LoginRequest:
     try:
         body: dict = json.loads(event["body"])
     except:
         raise ValidationError("Wrong message format")
     else:
-        request: LoginRequest = LoginRequest(**body)
-        return request.username, request.password, request.new_password
+        return LoginRequest(**body)
 
 def create_response(status_code: int, payload: dict | str) -> dict:
     return {'statusCode': status_code, 'body': json.dumps(payload)}
