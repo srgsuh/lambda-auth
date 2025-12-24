@@ -1,4 +1,3 @@
-
 import json
 from pydantic import BaseModel, field_validator, ValidationError
 
@@ -32,7 +31,7 @@ class LoginRequest(BaseModel):
 
     @field_validator("new_password")
     @classmethod
-    def password_may_be_none_or_valid(cls, value: str | None) -> str | None:
+    def is_none_or_valid(cls, value: str | None) -> str | None:
         if value is None:
             return value
 
@@ -50,3 +49,8 @@ def parse_event(event: dict) -> tuple[str, str, str | None]:
 
 def create_response(status_code: int, payload: dict | str) -> dict:
     return {'statusCode': status_code, 'body': json.dumps(payload)}
+
+def not_valid_response(ve: ValidationError) -> dict:
+    return create_response(400, {
+        "error": ve.errors(include_context=False,include_url=False,include_input=False)
+        })

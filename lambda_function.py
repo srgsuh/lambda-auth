@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 import os
 from pydantic import ValidationError
 from utils import (
-    create_response, LoginRequest, parse_event
+    create_response, not_valid_response, parse_event
 )
 from logger import logger
 
@@ -69,9 +69,9 @@ def lambda_handler(event, context) -> dict:
         response = login(event)
         logger.debug(f'Login response: {response}')
         return create_response(200, {"response": response})
-    except ValidationError as v:
-        logger.debug(f"ValidationError: {v.errors(include_context=False,include_url=False,include_input=False)}  .Response 400")
-        return create_response(400, {"error": v.errors(include_context=False,include_url=False,include_input=False)})
+    except ValidationError as ve:
+        logger.debug(f"ValidationError: {ve.errors(include_context=False,include_url=False,include_input=False)}")
+        return not_valid_response(ve)
     except Exception as e:
         logger.debug(f"Error type={type(e)}, Response 500")
         return create_response(500, {"error": str(e)})
