@@ -46,6 +46,17 @@ def parse_event(event: dict) -> LoginRequest:
     else:
         return LoginRequest(**body)
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+def parse_refresh_request(event: dict) -> RefreshRequest:
+    try:
+        body: dict = json.loads(event["body"])
+    except:
+        raise ValidationError("Wrong message format")
+    else:
+        return RefreshRequest(**body)
+
 def create_response(status_code: int, payload: dict | str) -> dict:
     return {'statusCode': status_code, 'body': json.dumps(payload)}
 
