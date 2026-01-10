@@ -95,7 +95,7 @@ def get_route(event: dict) -> tuple[str | None, str | None]:
     return http.get("method"), http.get("path")
 
 ROUTES: dict[tuple[str | None, str | None], Callable[[dict], dict]] = {
-    ("POST", "/login") : login,
+    ("POST", "/auth/login") : login,
     ("POST", "/auth/refresh") : refresh
 }
 
